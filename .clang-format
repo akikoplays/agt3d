@@ -1,0 +1,6 @@
+# Format Style Options - Created with Clang Power Tools
+---
+BasedOnStyle: Google
+BreakBeforeBraces: Linux
+ContinuationIndentWidth: 2
+...

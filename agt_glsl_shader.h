@@ -49,47 +49,59 @@ inline void setUniform(const Shader& shader, const std::string& name,
   glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
 }
 
-// template<class T>
-// void setUniform(const Shader& shader, const std::string& name, const T& val)
-// {
-//   auto loc = getUniformLoc(shader, name);
-
-//   if (std::is_same<T, glm::vec2>::value) {
-//     glUniform2f(loc, val.x, val.y);
-//   } else if (std::is_same<T, glm::vec3>::value) {
-//     glUniform3f(loc, val.x, val.y, val.z);
-//   } else if (std::is_same<T, glm::vec4>::value) {
-//     glUniform4f(loc, val.x, val.y, val.z, val.w);
-//   } else if (std::is_same<T, glm::mat3>::value) {
-//     glUniformMatrix3fv(loc, 1, GL_FALSE, (const
-//     GLfloat*)glm::value_ptr(val));
-//   } else if (std::is_same<T, glm::mat4>::value) {
-//     glUniformMatrix4fv(loc, 1, GL_FALSE, (const
-//     GLfloat*)glm::value_ptr(val));
-//   }
-// }
-
-template <class T>
-void setUniform(const Shader& shader, const std::string& name, const T&& val)
-{
-  auto loc = getUniformLoc(shader, name);
-
-  if (std::is_same<T, glm::vec2>::value) {
-    glUniform2f(loc, val.x, val.y);
-  } else if (std::is_same<T, glm::vec3>::value) {
-    glUniform3f(loc, val.x, val.y, val.z);
-  } else if (std::is_same<T, glm::vec4>::value) {
-    glUniform4f(loc, val.x, val.y, val.z, val.w);
-  } else if (std::is_same<T, glm::mat3>::value) {
-    glUniformMatrix3fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
-  } else if (std::is_same<T, glm::mat4>::value) {
-    glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
-  }
-}
-
 inline void setUniform(const Shader& shader, const std::string& name, float val)
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1f(loc, val);
 }
+
+inline void setUniform(const Shader& shader, const std::string&& name,
+                       float val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform1f(loc, val);
+}
+
+inline void setUniform(const Shader& shader, const std::string& name,
+                       glm::vec2 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform2f(loc, val.x, val.y);
+}
+
+inline void setUniform(const Shader& shader, const std::string&& name,
+                       glm::vec2 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform2f(loc, val.x, val.y);
+}
+
+inline void setUniform(const Shader& shader, const std::string& name,
+                       glm::vec3 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform3f(loc, val.x, val.y, val.z);
+}
+
+inline void setUniform(const Shader& shader, const std::string&& name,
+                       glm::vec3 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform3f(loc, val.x, val.y, val.z);
+}
+
+inline void setUniform(const Shader& shader, const std::string& name,
+                       glm::vec4 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform4f(loc, val.x, val.y, val.z, val.w);
+}
+
+inline void setUniform(const Shader& shader, const std::string&& name,
+                       glm::vec4 val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform4f(loc, val.x, val.y, val.z, val.w);
+}
+
 };  // namespace agt3d
