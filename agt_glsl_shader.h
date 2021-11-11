@@ -63,6 +63,20 @@ inline void setUniform(const Shader& shader, const std::string&& name,
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
+                       int val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform1i(loc, val);
+}
+
+inline void setUniform(const Shader& shader, const std::string&& name,
+                       int val)
+{
+  auto loc = getUniformLoc(shader, name);
+  glUniform1i(loc, val);
+}
+
+inline void setUniform(const Shader& shader, const std::string& name,
                        glm::vec2 val)
 {
   auto loc = getUniformLoc(shader, name);
