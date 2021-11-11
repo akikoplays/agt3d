@@ -27,7 +27,7 @@ inline bool hasUniform(const Shader& shader, const std::string& name) noexcept
   return it != shader.uniforms.end();
 }
 
-inline GLuint getUniformLoc(const Shader& shader, const std::string& name)
+inline GLuint getUniformLoc(const Shader& shader, const std::string& name) noexcept
 {
   if (!hasUniform(shader, name)) {
     return 0;
@@ -36,86 +36,108 @@ inline GLuint getUniformLoc(const Shader& shader, const std::string& name)
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       const glm::mat4& val)
+                       const glm::mat4& val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       const glm::mat4&& val)
+                       const glm::mat4&& val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
 }
 
-inline void setUniform(const Shader& shader, const std::string& name, float val)
+inline void setUniform(const Shader& shader, const std::string& name, float val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1f(loc, val);
 }
 
 inline void setUniform(const Shader& shader, const std::string&& name,
-                       float val)
+                       float val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1f(loc, val);
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       int val)
+                       int val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1i(loc, val);
 }
 
 inline void setUniform(const Shader& shader, const std::string&& name,
-                       int val)
+                       int val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1i(loc, val);
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       glm::vec2 val)
+                       glm::vec2 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform2f(loc, val.x, val.y);
 }
 
 inline void setUniform(const Shader& shader, const std::string&& name,
-                       glm::vec2 val)
+                       glm::vec2 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform2f(loc, val.x, val.y);
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       glm::vec3 val)
+                       glm::vec3 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform3f(loc, val.x, val.y, val.z);
 }
 
 inline void setUniform(const Shader& shader, const std::string&& name,
-                       glm::vec3 val)
+                       glm::vec3 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform3f(loc, val.x, val.y, val.z);
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       glm::vec4 val)
+                       glm::vec4 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform4f(loc, val.x, val.y, val.z, val.w);
 }
 
 inline void setUniform(const Shader& shader, const std::string&& name,
-                       glm::vec4 val)
+                       glm::vec4 val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform4f(loc, val.x, val.y, val.z, val.w);
+}
+
+inline void setUniform(const Shader& shader, const std::string& name,
+                             agt3d::shader_param_t& param) noexcept
+{
+  if (std::get_if<float>(&param)) {
+    setUniform(shader, name, std::get<float>(param));
+  } else if (std::get_if<int>(&param)) {
+    setUniform(shader, name, std::get<int>(param));
+  } else if (std::get_if<glm::vec2>(&param)) {
+    setUniform(shader, name, std::get<glm::vec2>(param));
+  } else if (std::get_if<glm::vec3>(&param)) {
+    setUniform(shader, name, std::get<glm::vec3>(param));
+  } else if (std::get_if<glm::vec4>(&param)) {
+    setUniform(shader, name, std::get<glm::vec4>(param));
+  } else if (std::get_if<glm::mat3>(&param)) {
+    setUniform(shader, name, std::get<glm::mat3>(param));
+  } else if (std::get_if<glm::mat4>(&param)) {
+    setUniform(shader, name, std::get<glm::mat4>(param));
+  } else {
+    MY_ABORT("param type not implemented");
+  }
 }
 
 };  // namespace agt3d
