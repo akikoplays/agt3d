@@ -1,5 +1,5 @@
-#include "agt_node.h"
 #include "agt_stdafx.h"
+#include "agt_node.h"
 
 namespace agt3d
 {
