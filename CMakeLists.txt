@@ -39,9 +39,10 @@ if (MSVC)
     lib
   )
 else()
-  target_link_directories(agt3d PUBLIC 
-    lib
-  )
+  # install assimp via homebrew
+  # target_link_directories(agt3d PUBLIC 
+  #   lib
+  # )
 endif()
 
 target_link_libraries(agt3d PRIVATE 
