@@ -43,17 +43,6 @@ add_library(agt3d
   ${SRCS}
 )
 
-# if (MSVC)
-#   target_link_directories(agt3d PUBLIC 
-#     lib
-#   )
-# else()
-#   # install assimp via homebrew
-#   # target_link_directories(agt3d PUBLIC 
-#   #   lib
-#   # )
-# endif()
-
 target_link_libraries(agt3d PRIVATE 
   assimp
 )
@@ -69,6 +58,13 @@ target_include_directories(agt3d PRIVATE
   stb
 )
 
+message(STATUS "ASSIMP include dir: ${assimp_SOURCE_DIR}")
+message(STATUS "ASSIMP build dir: ${assimp_BINARY_DIR}")
+
+target_include_directories(agt3d PUBLIC
+  ${assimp_SOURCE_DIR}/include
+  ${assimp_BINARY_DIR}/include
+)
 
 target_precompile_headers(agt3d PRIVATE 
   "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/agt_stdafx.h>"
