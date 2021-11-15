@@ -1,11 +1,20 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(agt3d VERSION 0.1.0)
+include(FetchContent)
+
+FetchContent_Declare(
+  assimp
+  GIT_REPOSITORY https://github.com/assimp/assimp.git
+)
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "Build Assimp tests")
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "Build Assimp tools")
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libs")
+FetchContent_MakeAvailable(assimp)
 
 if (MSVC)
   add_compile_options(/W3 /WX)
-  add_definitions(-DLINK_ASSIMP -DWINDOWS)
+  add_definitions(-DWINDOWS)
 else()
-  add_definitions(-DLINK_ASSIMP)
   add_compile_options(-W -Wall -pedantic 
     -Wno-unused-variable -Wno-deprecated-volatile -Wno-reorder-ctor -Wno-unused-parameter)
 endif()
@@ -34,16 +43,16 @@ add_library(agt3d
   ${SRCS}
 )
 
-if (MSVC)
-  target_link_directories(agt3d PUBLIC 
-    lib
-  )
-else()
-  # install assimp via homebrew
-  # target_link_directories(agt3d PUBLIC 
-  #   lib
-  # )
-endif()
+# if (MSVC)
+#   target_link_directories(agt3d PUBLIC 
+#     lib
+#   )
+# else()
+#   # install assimp via homebrew
+#   # target_link_directories(agt3d PUBLIC 
+#   #   lib
+#   # )
+# endif()
 
 target_link_libraries(agt3d PRIVATE 
   assimp
