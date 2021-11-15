@@ -62,6 +62,7 @@ target_include_directories(agt3d PUBLIC
   glad
   glm
   ./
+  assimp
 )
 
 target_include_directories(agt3d PRIVATE
