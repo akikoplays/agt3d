@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef USE_ASSIMP
+
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
@@ -55,3 +57,5 @@ class Model3d
   const std::string filenameWithExtension;
 };
 }  // namespace agt3d
+
+#endif

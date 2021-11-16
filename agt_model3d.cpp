@@ -1,3 +1,5 @@
+#ifdef USE_ASSIMP
+
 #include "agt_model3d.h"
 #include "agt_object.h"
 #include "agt_object_instance.h"
@@ -232,3 +234,5 @@ std::vector<std::shared_ptr<agt3d::Texture>> Model3d::loadMaterialTextures(
   return textures;
 }
 }  // namespace agt3d
+
+#endif // USE_ASSIMP
