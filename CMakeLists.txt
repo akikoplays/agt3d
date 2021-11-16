@@ -14,7 +14,6 @@ if (BUILD_ASSIMP)
   set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "Build Assimp tools")
   set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libs")
   FetchContent_MakeAvailable(assimp)
-  add_definitions(-DUSE_ASSIMP)
 else()
   message(STATUS "Building agt3d lib without Asssimp support")
 endif()
@@ -72,7 +71,9 @@ if (BUILD_ASSIMP)
   target_include_directories(agt3d PUBLIC
     ${assimp_SOURCE_DIR}/include
     ${assimp_BINARY_DIR}/include
-  )  
+  )
+
+  target_compile_definitions(agt3d PUBLIC USE_ASSIMP=1)
 endif()
 
 target_include_directories(agt3d PRIVATE
