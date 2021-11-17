@@ -173,6 +173,19 @@ void Texture::createOpenGLTextureObject(int width, int height, int _channels,
   glBindTexture(textureTarget, boundTexture);
 }
 
+void Texture::create(int width, int height) { MY_ABORT("not implemented"); }
+
+void Texture::create(int width, int height, GLenum _sizedInternalFormat)
+{
+  resolution = {width, height};
+  sizedInternalFormat = _sizedInternalFormat;
+  glGenTextures(1, &textureObject);
+  glBindTexture(GL_TEXTURE_2D, textureObject);
+  glTexStorage2D(GL_TEXTURE_2D, 1, sizedInternalFormat, resolution.x,
+                 resolution.y);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture::update(GLenum format, GLenum type, void* data)
 {
   glBindTexture(GL_TEXTURE_2D, textureObject);
