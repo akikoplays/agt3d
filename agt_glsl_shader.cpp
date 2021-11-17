@@ -1,12 +1,20 @@
 #include "agt_glsl_shader.h"
 
-static const char* version = "#version 330 core\n";
+static std::string glslVersion = "#version 330 core";
+
 static std::map<std::string, agt3d::Shader> cachedShaders;
 
 namespace agt3d
 {
 
 void log(const std::string& msg) { std::cerr << msg << "\n"; }
+
+void setGlslVersion(const std::string& version) noexcept
+{
+  glslVersion = version;
+}
+
+std::string getGlslVersion() noexcept { return glslVersion; }
 
 std::optional<std::string> validateShader(GLuint shaderIndex)
 {
@@ -126,9 +134,11 @@ std::optional<Shader> compileShader(const std::string& path) noexcept
     return std::nullopt;
   }
 
-  const GLchar* vertexSources[] = {version, "#define VERTEX\n",
+  const GLchar* vertexSources[] = {getGlslVersion().c_str(), "\n",
+                                   "#define VERTEX\n",
                                    source->glslShaderSource.c_str()};
-  const GLchar* fragmentSources[] = {version, "#define FRAGMENT\n",
+  const GLchar* fragmentSources[] = {getGlslVersion().c_str(), "\n",
+                                     "#define FRAGMENT\n",
                                      source->glslShaderSource.c_str()};
 
   auto vert = glCreateShader(GL_VERTEX_SHADER);
@@ -141,11 +151,11 @@ std::optional<Shader> compileShader(const std::string& path) noexcept
 
   glCompileShader(vert);
   if (validateShader(vert)) {
-    abort();
+    return {};
   }
   glCompileShader(frag);
   if (validateShader(frag)) {
-    abort();
+    return {};
   }
 
   auto prog = glCreateProgram();
@@ -153,16 +163,16 @@ std::optional<Shader> compileShader(const std::string& path) noexcept
   glAttachShader(prog, frag);
   glLinkProgram(prog);
   if (validateProgram(prog)) {
-    abort();
+    return {};
   }
 
   // cleanup - this will delete the shaders once the program is not used any
   // more
   glDeleteShader(vert);
   glDeleteShader(frag);
-
+#ifdef VERBOSE
   std::cout << "glsl compiled: " << prog << "\n";
-
+#endif
   Shader shader;
   shader.program = prog;
   shader.glslShaderPath = path;
