@@ -6,7 +6,6 @@ static std::map<std::string, agt3d::Shader> cachedShaders;
 
 namespace agt3d
 {
-
 void log(const std::string& msg) { std::cerr << msg << "\n"; }
 
 void setGlslVersion(const std::string& version) noexcept
@@ -134,11 +133,12 @@ std::optional<Shader> compileShader(const std::string& path) noexcept
     return std::nullopt;
   }
 
-  const GLchar* vertexSources[] = {getGlslVersion().c_str(), "\n",
-                                   "#define VERTEX\n",
+  auto tmp = glslVersion + "\n";
+  const char* version = tmp.c_str();
+
+  const GLchar* vertexSources[] = {version, "#define VERTEX\n",
                                    source->glslShaderSource.c_str()};
-  const GLchar* fragmentSources[] = {getGlslVersion().c_str(), "\n",
-                                     "#define FRAGMENT\n",
+  const GLchar* fragmentSources[] = {version, "#define FRAGMENT\n",
                                      source->glslShaderSource.c_str()};
 
   auto vert = glCreateShader(GL_VERTEX_SHADER);

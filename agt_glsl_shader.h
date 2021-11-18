@@ -16,6 +16,9 @@ struct Shader {
   bool compiled;
 };
 
+void setGlslVersion(const std::string& version) noexcept;
+std::string getGlslVersion() noexcept;
+
 std::optional<Shader> compileShader(const std::string& path) noexcept;
 void cacheShader(const std::string& id, const Shader& shader) noexcept;
 std::optional<const Shader*> getShader(const std::string& id) noexcept;
@@ -27,7 +30,8 @@ inline bool hasUniform(const Shader& shader, const std::string& name) noexcept
   return it != shader.uniforms.end();
 }
 
-inline GLuint getUniformLoc(const Shader& shader, const std::string& name) noexcept
+inline GLuint getUniformLoc(const Shader& shader,
+                            const std::string& name) noexcept
 {
   if (!hasUniform(shader, name)) {
     return 0;
@@ -49,7 +53,8 @@ inline void setUniform(const Shader& shader, const std::string& name,
   glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(val));
 }
 
-inline void setUniform(const Shader& shader, const std::string& name, float val) noexcept
+inline void setUniform(const Shader& shader, const std::string& name,
+                       float val) noexcept
 {
   auto loc = getUniformLoc(shader, name);
   glUniform1f(loc, val);
@@ -119,7 +124,7 @@ inline void setUniform(const Shader& shader, const std::string&& name,
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                             agt3d::shader_param_t& param) noexcept
+                       agt3d::shader_param_t& param) noexcept
 {
   if (std::get_if<float>(&param)) {
     setUniform(shader, name, std::get<float>(param));
