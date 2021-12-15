@@ -1,11 +1,12 @@
-#include "agt_stdafx.h"
-#include "agt_utils.h"
-#include "agt_object_instance.h"
 #include <algorithm>
 #include <iostream>
 #include <limits>
 #include <stack>
 #include <vector>
+
+#include "agt_object_instance.h"
+#include "agt_stdafx.h"
+#include "agt_utils.h"
 
 namespace agt3d
 {
@@ -69,7 +70,8 @@ void dumpToFile(std::string filename, uint8_t* data, size_t len) noexcept
   fp.close();
 }
 
-void linearRegression(std::vector<glm::vec2> points, float& b, float& m) noexcept
+void linearRegression(std::vector<glm::vec2> points, float& b,
+                      float& m) noexcept
 {
   // mean x and y vals
   float meanx = 0.0f;
@@ -96,8 +98,8 @@ void linearRegression(std::vector<glm::vec2> points, float& b, float& m) noexcep
   b = meany - m * meanx;
 }
 
-
-glm::vec3 get_arcball_vector(int x, int y, int screen_width, int screen_height) noexcept
+glm::vec3 get_arcball_vector(int x, int y, int screen_width,
+                             int screen_height) noexcept
 {
   glm::vec3 P = glm::vec3(1.0 * x / screen_width * 2 - 1.0,
                           1.0 * y / screen_height * 2 - 1.0, 0);
@@ -191,8 +193,8 @@ std::string getPath(std::string fullpath) noexcept
 
 agt3d::ObjectInstance* oiFactory(std::string&& name) noexcept
 {
-  // Create placeholder Object, Mesh, Oi that will be used for PCL
-  // representation of the body
+  // Create the complete tree for an OI: mesh, object, material, object
+  // instance, and connect them
   auto mesh = std::shared_ptr<agt3d::Mesh>(new agt3d::Mesh());
   auto mat = std::shared_ptr<agt3d::Material>(new agt3d::Material());
   auto obj = std::shared_ptr<agt3d::Object>(new agt3d::Object(mesh, mat, name));
