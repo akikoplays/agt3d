@@ -1,5 +1,5 @@
-#include "agt_scene.h"
 #include "agt_object_instance.h"
+#include "agt_scene.h"
 #include "agt_stdafx.h"
 
 agt3d::Scene::Scene() : name("unnamed"), _uuid(uuids::uuid_system_generator{}())
@@ -7,15 +7,14 @@ agt3d::Scene::Scene() : name("unnamed"), _uuid(uuids::uuid_system_generator{}())
 #ifdef VERBOSE
   std::cout << "Scene ctor" << std::endl;
 #endif
-  return;
 }
 
-agt3d::Scene::Scene(const std::string& _name) : name(_name)
+agt3d::Scene::Scene(const std::string& _name)
+    : name(_name), _uuid(uuids::uuid_system_generator{}())
 {
 #ifdef VERBOSE
   std::cout << "Scene ctor: " << name << std::endl;
 #endif
-  return;
 }
 
 agt3d::Scene::~Scene()
@@ -23,7 +22,6 @@ agt3d::Scene::~Scene()
 #ifdef VERBOSE
   std::cout << "Scene dtor: " << name << std::endl;
 #endif
-  return;
 }
 
 const uuids::uuid agt3d::Scene::uuid() const noexcept { return _uuid; }
@@ -36,13 +34,11 @@ void agt3d::Scene::addObjectInstance(std::shared_ptr<agt3d::ObjectInstance>& oi)
 {
   // TODO check if already in the scene!
   ois.push_back(oi);
-  return;
 }
 
 void agt3d::Scene::addMaterial(std::shared_ptr<agt3d::Material>& mat)
 {
   materials.push_back(mat);
-  return;
 }
 
 const std::vector<std::shared_ptr<agt3d::Material>>&
@@ -54,7 +50,6 @@ agt3d::Scene::getMaterials()
 void agt3d::Scene::addTexture(std::shared_ptr<agt3d::Texture>& tex)
 {
   textures.push_back(tex);
-  return;
 }
 
 const std::vector<std::shared_ptr<agt3d::Texture>>& agt3d::Scene::getTextures()
@@ -93,7 +88,6 @@ void agt3d::Scene::removeObjectInstance(const agt3d::ObjectInstance* oi)
   ois.erase(std::remove_if(
     ois.begin(), ois.end(),
     [oi](std::shared_ptr<agt3d::ObjectInstance>& a) { return a.get() == oi; }));
-  return;
 }
 
 agt3d::BoundingSphere agt3d::Scene::calculateBoundingSphere() const
