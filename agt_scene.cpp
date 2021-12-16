@@ -2,7 +2,7 @@
 #include "agt_object_instance.h"
 #include "agt_stdafx.h"
 
-agt3d::Scene::Scene() : name("unnamed")
+agt3d::Scene::Scene() : name("unnamed"), _uuid(uuids::uuid_system_generator{}())
 {
 #ifdef VERBOSE
   std::cout << "Scene ctor" << std::endl;
@@ -25,6 +25,8 @@ agt3d::Scene::~Scene()
 #endif
   return;
 }
+
+const uuids::uuid agt3d::Scene::uuid() const noexcept { return _uuid; }
 
 const std::string& agt3d::Scene::getName() const { return name; }
 

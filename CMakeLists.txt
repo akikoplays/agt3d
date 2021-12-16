@@ -18,6 +18,15 @@ else()
   message(STATUS "Building agt3d lib without Asssimp support")
 endif()
 
+FetchContent_Declare(
+  stduuid
+  GIT_REPOSITORY https://github.com/mariusbancila/stduuid.git
+)
+set(UUID_BUILD_TESTS OFF CACHE INTERNAL "Build tests for stduuid")
+set(UUID_USING_CXX20_SPAN  ON CACHE INTERNAL "Use c++20 span feature in stduuid")
+set(UUID_SYSTEM_GENERATOR  ON CACHE INTERNAL "Enable default system generator")
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libs")
+FetchContent_MakeAvailable(stduuid)
 
 if (MSVC)
   add_compile_options(/W3 /WX)
@@ -55,6 +64,10 @@ target_include_directories(agt3d PUBLIC
   glad
   glm
   ./
+)
+
+target_link_libraries(agt3d PRIVATE
+  stduuid
 )
 
 if (BUILD_ASSIMP)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "agt_AABB.h"
+#include <uuid.h>
 
 namespace agt3d
 {
@@ -17,6 +18,7 @@ class Scene
   ~Scene();
   Scene& operator=(const Scene& other) = delete;
   Scene(Scene&) = delete;
+  const uuids::uuid uuid() const noexcept;
   const std::string& getName() const;
   ObjectInstance* getRoot();
   void addObjectInstance(std::shared_ptr<agt3d::ObjectInstance>& oi);
@@ -44,5 +46,6 @@ class Scene
 
  private:
   std::string name;
+  const uuids::uuid _uuid;
 };
 }  // namespace agt3d
