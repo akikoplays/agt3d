@@ -70,6 +70,10 @@ target_link_libraries(agt3d PRIVATE
   stduuid
 )
 
+target_include_directories(agt3d PUBLIC 
+  stduuid
+)
+
 if (BUILD_ASSIMP)
   target_link_libraries(agt3d PRIVATE 
     assimp
