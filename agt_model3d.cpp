@@ -1,6 +1,7 @@
 #ifdef USE_ASSIMP
 
 #include "agt_model3d.h"
+
 #include "agt_object.h"
 #include "agt_object_instance.h"
 #include "agt_scene.h"
@@ -9,7 +10,6 @@
 
 namespace agt3d
 {
-
 Model3d::Model3d(const std::string& fullpath)
     : fullPath(fullpath),
       pathWithoutFilename(agt3d::getPath(fullpath)),
@@ -53,9 +53,118 @@ std::shared_ptr<agt3d::Material>& Model3d::getMaterialById(int id)
   return materials[id];
 }
 
+agt3d::Node createPRSFromTransformation(aiMatrix4x4& tm)
+{
+  glm::mat4 mat = glm::make_mat4(tm[0]);
+  glm::vec3 scale, trans, skew;
+  glm::quat rot;
+  glm::vec4 persp;
+  glm::decompose(mat, scale, rot, trans, skew, persp);
+
+  agt3d::Node prs;
+  prs.setLocalPosition(trans);
+  prs.setLocalScale(scale);
+  prs.setLocalRotation(rot);
+
+  // Old way;
+  // Set PRS Transform
+  // aiVector3D scalev, posv;
+  // aiQuaternion rotq;
+  // tm.Decompose(scalev, rotq, posv);
+  // agt3d::Node prs;
+  // prs.setLocalPosition(glm::make_vec3(&posv[0]));
+  // prs.setLocalScale(glm::make_vec3(&scalev[0]));
+  // rotq = rotq.Conjugate();
+  // prs.setLocalRotation(glm::quat(rotq.w, rotq.x, rotq.y, rotq.z));
+  return prs;
+}
+
+/**
+ * @brief Experimental - attempt to fix the fbx axis permutations.. unsuccessful
+ * so far.
+ * @param scene
+ * @return
+ */
+void fixUpAxisAndScale(aiScene* scene) noexcept
+{
+  if (scene->mMetaData) {
+    for (unsigned int i = 0; i < scene->mMetaData->mNumProperties; ++i) {
+      std::cout << scene->mMetaData->mKeys[i].C_Str();
+      int val = 0;
+      scene->mMetaData->Get<int>(scene->mMetaData->mKeys[i], val);
+      std::cout << " : " << val << "\n";
+    }
+
+    int coordAxis = 0, coordAxisSign = 1, upAxis = 1, upAxisSign = 1,
+        frontAxis = 2, frontAxisSign = 1;
+
+    int originalUpAxis = 1;
+    int originalUpAxisSign = 1;
+    scene->mMetaData->Get<int>("OriginalUpAxis", originalUpAxis);
+    scene->mMetaData->Get<int>("OriginalUpAxisSign", originalUpAxisSign);
+
+    scene->mMetaData->Get<int>("CoordAxis", coordAxis);
+    scene->mMetaData->Get<int>("UpAxis", upAxis);
+    scene->mMetaData->Get<int>("FrontAxis", frontAxis);
+
+    scene->mMetaData->Get<int>("CoordAxisSign", coordAxisSign);
+    scene->mMetaData->Get<int>("UpAxisSign", upAxisSign);
+    scene->mMetaData->Get<int>("FrontAxisSign", frontAxisSign);
+
+    // In some of the fbx scenes, originalUpAxis is 2 => it's up and front
+    // swapping
+    if (originalUpAxis >= 0 && originalUpAxis <= 2) {
+      if (originalUpAxis != upAxis) {
+        if (originalUpAxis == 0) {
+          coordAxis = upAxis;
+        } else if (originalUpAxis == 2) {
+          frontAxis = upAxis;
+        }
+        upAxis = originalUpAxis;
+      }
+    }
+
+    double unitScaleFactor = 1.0;
+    scene->mMetaData->Get<double>("unitScaleFactor", unitScaleFactor);
+
+    aiVector3D upVec = upAxis == 0 ? aiVector3D((float)upAxisSign, 0.0f, 0.0f)
+                       : upAxis == 1
+                         ? aiVector3D(0.0f, (float)upAxisSign, 0.0f)
+                         : aiVector3D(0.0f, 0.0f, (float)upAxisSign);
+    aiVector3D forwardVec =
+      frontAxis == 0   ? aiVector3D((float)frontAxisSign, 0.0f, 0.0f)
+      : frontAxis == 1 ? aiVector3D(0.0f, (float)frontAxisSign, 0.0f)
+                       : aiVector3D(0.0f, 0.0f, (float)frontAxisSign);
+    aiVector3D rightVec =
+      coordAxis == 0   ? aiVector3D((float)coordAxisSign, 0.0f, 0.0f)
+      : coordAxis == 1 ? aiVector3D(0.0f, (float)coordAxisSign, 0.0f)
+                       : aiVector3D(0.0f, 0.0f, (float)coordAxisSign);
+
+    upVec[upAxis] = upAxisSign * (float)unitScaleFactor;
+    forwardVec[frontAxis] = frontAxisSign * (float)unitScaleFactor;
+    rightVec[coordAxis] = coordAxisSign * (float)unitScaleFactor;
+
+    aiMatrix4x4 mat(rightVec.x, rightVec.y, rightVec.z, 0.0f, upVec.x, upVec.y,
+                    upVec.z, 0.0f, forwardVec.x, forwardVec.y, forwardVec.z,
+                    0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    // mat = {
+    //   1.0f, 0.0f, 0.0f, 0.0f,
+    //   0.0f, 1.0f, 0.0f, 0.0f,
+    //   0.0f, 0.0f, 1.0f, 0.0f,
+    //   0.0f, 0.0f, 0.0f, 1.0f,
+    // };
+    scene->mRootNode->mTransformation = mat;
+  }
+}
+
 void Model3d::prepare(agt3d::Scene& s)
 {
   MY_ASSERT(scene, "scene is NULL. You have to load it from the disk first.")
+
+  // Experimental - don't use in production
+  // fixUpAxisAndScale(getScene());
+
   materials.reserve(getScene()->mNumMaterials);
   for (unsigned int m = 0; m < getScene()->mNumMaterials; m++) {
     auto aimat = getScene()->mMaterials[m];
@@ -74,24 +183,14 @@ void Model3d::prepare(agt3d::Scene& s)
 
   auto root = std::shared_ptr<agt3d::ObjectInstance>(
     new agt3d::ObjectInstance("AGT3DROOT"));
+
+  auto prs = createPRSFromTransformation(scene->mRootNode->mTransformation);
+  root->setLocalPRS(prs);
+
   s.addObjectInstance(root);
   processNode(scene->mRootNode, s, root);
 
   return;
-}
-
-agt3d::Node createPRSFromTransformation(aiMatrix4x4& tm)
-{
-  // Set PRS Transform
-  aiVector3D scalev, posv;
-  aiQuaternion rotq;
-  tm.Decompose(scalev, rotq, posv);
-  agt3d::Node prs;
-  prs.setLocalPosition(glm::make_vec3(&posv[0]));
-  prs.setLocalScale(glm::make_vec3(&scalev[0]));
-  rotq = rotq.Conjugate();
-  prs.setLocalRotation(glm::quat(rotq.w, rotq.x, rotq.y, rotq.z));
-  return prs;
 }
 
 void Model3d::processNode(aiNode* aNode, agt3d::Scene& s,
@@ -235,4 +334,4 @@ std::vector<std::shared_ptr<agt3d::Texture>> Model3d::loadMaterialTextures(
 }
 }  // namespace agt3d
 
-#endif // USE_ASSIMP
+#endif  // USE_ASSIMP
