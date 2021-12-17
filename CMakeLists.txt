@@ -2,13 +2,14 @@ cmake_minimum_required(VERSION 3.19.0)
 project(agt3d VERSION 0.1.1)
 include(FetchContent)
 
-option(BUILD_ASSIMP "Build assimp library" OFF)
+option(BUILD_ASSIMP "Build assimp library" ON)
 
 if (BUILD_ASSIMP)
   message(STATUS "Building agt3d lib with Asssimp support")
   FetchContent_Declare(
     assimp
     GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG master
   )
   set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "Build Assimp tests")
   set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "Build Assimp tools")
