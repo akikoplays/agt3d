@@ -41,11 +41,11 @@
 // #error "<source_location> not found"
 // #endif
 
-#ifdef WINDOWS
-#include <execution>
-#include <numbers>
-#include <Windows.h>
-#endif
+//#ifdef WINDOWS
+//#include <execution>
+//#include <numbers>
+//#include <Windows.h>
+//#endif
 
 #include <glad/glad.h>
 
