@@ -19,14 +19,6 @@ else()
   message(STATUS "Building agt3d lib without Asssimp support")
 endif()
 
-if (MSVC)
-  add_compile_options(/W3 /WX)
-  add_definitions(-DWINDOWS)
-else()
-  add_compile_options(-W -Wall -pedantic 
-    -Wno-unused-variable -Wno-deprecated-volatile -Wno-reorder-ctor -Wno-unused-parameter)
-endif()
-
 file (GLOB_RECURSE GLAD_SRCS
   glad/*.h
   glad/*.c
@@ -81,6 +73,14 @@ endif()
 target_include_directories(agt3d PRIVATE
   stb
 )
+
+if (MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W3)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE WINDOWS)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -W -Wall -pedantic 
+    -Wno-unused-variable -Wno-deprecated-volatile -Wno-reorder-ctor -Wno-unused-parameter)
+endif()
 
 target_precompile_headers(agt3d PRIVATE 
   "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/agt_stdafx.h>"

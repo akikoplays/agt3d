@@ -44,9 +44,6 @@
 #ifdef WINDOWS
 #include <execution>
 #include <numbers>
-#endif
-
-#ifdef WINDOWS
 #include <Windows.h>
 #endif
 
