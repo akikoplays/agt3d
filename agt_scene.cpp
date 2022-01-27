@@ -17,12 +17,12 @@ agt3d::Scene::Scene(const std::string& _name)
 #endif
 }
 
-agt3d::Scene::Scene(uuids::uuid uuid)
+agt3d::Scene::Scene(const uuids::uuid& uuid)
   : _uuid(uuid)
 {
 }
 
-agt3d::Scene::Scene(const std::string& _name, uuids::uuid uuid)
+agt3d::Scene::Scene(const std::string& _name, const uuids::uuid& uuid)
   : name(_name), _uuid(uuid)
 {
 }
