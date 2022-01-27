@@ -15,6 +15,8 @@ class Scene
  public:
   Scene();
   Scene(const std::string& _name);
+  Scene(uuids::uuid uuid);
+  Scene(const std::string& _name, uuids::uuid uuid);
   ~Scene();
   Scene& operator=(const Scene& other) = delete;
   Scene(Scene&) = delete;
