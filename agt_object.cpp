@@ -13,13 +13,6 @@ namespace agt3d {
 #endif
 	}
 
-	Object::~Object()
-	{
-#ifdef VERBOSE
-		std::cout << "Object dtor " << name << std::endl;
-#endif
-	}
-
 	void Object::setMesh(std::shared_ptr<Mesh>& _mesh)
 	{
 		mesh = _mesh;

@@ -40,30 +40,32 @@ inline GLuint getUniformLoc(const Shader& shader,
 }
 
 inline void setUniform(const Shader& shader, const std::string& name,
-                       const agt3d::shader_param_t param) noexcept
+                       const agt3d::shader_param_t param, int locationOffset = 0) noexcept
 {
   auto loc = getUniformLoc(shader, name);
 
   if (std::get_if<float>(&param)) {
-    glUniform1f(loc, std::get<float>(param));
+    glUniform1f(loc + locationOffset, std::get<float>(param));
   } else if (std::get_if<int>(&param)) {
-    glUniform1i(loc, std::get<int>(param));
+    glUniform1i(loc + locationOffset, std::get<int>(param));
   } else if (std::get_if<glm::vec2>(&param)) {
-    glUniform2f(loc, std::get<glm::vec2>(param).x,
+    glUniform2f(loc + locationOffset, std::get<glm::vec2>(param).x,
                 std::get<glm::vec2>(param).y);
   } else if (std::get_if<glm::vec3>(&param)) {
-    glUniform3f(loc, std::get<glm::vec3>(param).x, std::get<glm::vec3>(param).y,
+    glUniform3f(loc + locationOffset, std::get<glm::vec3>(param).x,
+                std::get<glm::vec3>(param).y,
                 std::get<glm::vec3>(param).z);
   } else if (std::get_if<glm::vec4>(&param)) {
-    glUniform4f(loc, std::get<glm::vec4>(param).x, std::get<glm::vec4>(param).y,
+    glUniform4f(loc + locationOffset, std::get<glm::vec4>(param).x,
+                std::get<glm::vec4>(param).y,
                 std::get<glm::vec4>(param).z, std::get<glm::vec4>(param).w);
   } else if (std::get_if<glm::mat3>(&param)) {
     glUniformMatrix3fv(
-      loc, 1, GL_FALSE,
+      loc + locationOffset, 1, GL_FALSE,
       (const GLfloat*)glm::value_ptr(std::get<glm::mat3>(param)));
   } else if (std::get_if<glm::mat4>(&param)) {
     glUniformMatrix4fv(
-      loc, 1, GL_FALSE,
+      loc + locationOffset, 1, GL_FALSE,
       (const GLfloat*)glm::value_ptr(std::get<glm::mat4>(param)));
   } else {
     MY_ABORT("param type not implemented");

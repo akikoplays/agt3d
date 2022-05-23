@@ -2,7 +2,7 @@
 
 static std::string glslVersion = "#version 330 core";
 
-static std::map<std::string, agt3d::Shader> cachedShaders;
+static std::unordered_map<std::string, agt3d::Shader> cachedShaders;
 
 namespace agt3d
 {
