@@ -3,14 +3,13 @@
 
 namespace agt3d {
 
-  ObjectInstance::ObjectInstance(std::string _name) :
-    name(_name),
+  ObjectInstance::ObjectInstance(const std::string& _name) :
+    name(_name), uuid(uuids::uuid_system_generator{}()),
     localPRS(Node({ 0,0,0 }, { 1,0,0,0 }, { 1,1,1 }))
   {
 #ifdef VERBOSE
     std::cout << "OI ctor " << name << std::endl;
 #endif
-    return;
   }
 
   ObjectInstance::~ObjectInstance()
@@ -18,20 +17,17 @@ namespace agt3d {
 #ifdef VERBOSE
     std::cout << "OI dtor " << name << std::endl;
 #endif
-    return;
   }
 
   void ObjectInstance::setObject(std::shared_ptr<Object>& _obj)
   {
     obj = _obj;
-    return;
   }
 
   void ObjectInstance::setLocalPRS(Node& prs)
   {
     tmDirty = true;
     localPRS = prs;
-    return;
   }
 
   agt3d::Node ObjectInstance::getLocalPRS()
@@ -43,21 +39,18 @@ namespace agt3d {
   {
     tmDirty = true;
     localPRS.setLocalPosition(position);
-    return;
   }
 
   void ObjectInstance::setLocalScale(const glm::vec3& scale)
   {
     tmDirty = true;
     localPRS.setLocalScale(scale);
-    return;
   }
 
   void ObjectInstance::setLocalRotation(const glm::quat& rotation)
   {
     tmDirty = true;
     localPRS.setLocalRotation(rotation);
-    return;
   }
 
 //  void ObjectInstance::render(Shader* shader, glm::mat4& view, glm::mat4& proj)
@@ -152,7 +145,6 @@ namespace agt3d {
   {
     parent = oi;
     tmDirty = true;
-    return;
   }
 
   agt3d::BoundingSphere ObjectInstance::getBoundingSphere()
@@ -194,7 +186,6 @@ namespace agt3d {
   void ObjectInstance::setRenderTechnique(const RenderTechnique& tech)
   {
     technique = RenderTechnique(tech);
-    return;
   }
 
   const RenderTechnique& ObjectInstance::getRenderTechnique()
@@ -205,7 +196,6 @@ namespace agt3d {
   void ObjectInstance::setEnabled(bool ena) 
   {
     enabled = ena;
-    return;
   }
 
   bool ObjectInstance::isEnabled() 

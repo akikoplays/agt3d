@@ -2,6 +2,7 @@
 
 #include "agt_node.h"
 #include "agt_object.h"
+#include "uuid/uuid.h"
 
 namespace agt3d
 {
@@ -28,7 +29,7 @@ class RenderTechnique
 class ObjectInstance
 {
  public:
-  ObjectInstance(std::string _name);
+  ObjectInstance(const std::string& _name);
   ~ObjectInstance();
   /**
    * Discontinued. Renderer is not a part of OI.
@@ -57,6 +58,7 @@ class ObjectInstance
 
  public:
   std::string name;
+  const uuids::uuid uuid;
 
  private:
   agt3d::Node localPRS;
